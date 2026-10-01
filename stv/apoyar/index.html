@@ -1,0 +1,270 @@
+<!doctype html>
+<!--
+  Web "Apoyar el proyecto" de STV. Fuente: web/apoyar/ del repo privado; se publica en
+  https://estebanrios.github.io/stv/apoyar/ (esa direccion esta grabada en el QR de Ajustes STV:
+  NO se mueve). Ficha: docs/tareas/apoyar-proyecto.md.
+
+  Para cambiar un link o un monto se edita SOLO el bloque ENLACES de abajo: no hace falta
+  rehornear la imagen. Un link en null sale como "Proximamente".
+  Textos en espanol e ingles NEUTROS (sin voseo ni tuteo; memoria textos-neutros-apps).
+  Sin rastreadores, sin cookies, sin recursos de terceros (las fuentes viajan al lado, OFL).
+  Ingles y tema oscuro por defecto (pedido del usuario 2026-10-01); ES y modo claro a eleccion,
+  recordados en localStorage del visitante.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Support the project · STV</title>
+<meta name="description" content="Formas de apoyar el firmware STV para la TrimUI Smart Pro S.">
+<style>
+@font-face { font-family: "Plex Sans"; src: url("fuentes/IBMPlexSans-Regular.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Plex Sans"; src: url("fuentes/IBMPlexSans-Medium.ttf") format("truetype"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Plex Mono"; src: url("fuentes/IBMPlexMono-Regular.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+
+/* Paleta STV (apps/stvajustes/res/values/paleta.xml, la misma del tema de Pegasus).
+   Oscuro por defecto, como la consola; el boton de tema pasa a claro y se recuerda. */
+:root {
+  --fondo: #0B0F0D; --superficie: #111713; --linea: #161D18; --linea2: #1B2620;
+  --acento: #3DDC84; --texto: #F2EAD8; --texto2: #C9C3B4; --muted: #9AA49E; --dim: #5C6B62;
+  --foco: #15251B;
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  --fondo: #F5EFE3; --superficie: #FFFFFF; --linea: #E4DCCB; --linea2: #CFC5B0;
+  --acento: #1E9E5C; --texto: #14201A; --texto2: #2E3A33; --muted: #5C6B62; --dim: #7A877F;
+  --foco: #E7F5EC;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--fondo); color: var(--texto);
+  font: 400 16px/1.55 "Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+main { max-width: 640px; margin: 0 auto; padding: 28px 16px 48px; }
+
+/* Idioma: los dos textos viven en el HTML; se muestra el del atributo lang */
+html[lang="es"] [lang="en"], html[lang="en"] [lang="es"] { display: none; }
+
+.cabeza { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+.marca { font: 400 13px/1 "Plex Mono", ui-monospace, monospace; letter-spacing: .08em; color: var(--muted); }
+.marca b { color: var(--acento); font-weight: 400; }
+.controles { display: flex; gap: 10px; align-items: center; }
+.idiomas { display: flex; gap: 2px; font: 400 13px/1 "Plex Mono", ui-monospace, monospace; }
+.idiomas button {
+  font: inherit; color: var(--dim); background: none; border: 1px solid transparent;
+  padding: 6px 9px; border-radius: 6px; cursor: pointer;
+}
+.idiomas button[aria-pressed="true"] { color: var(--texto); border-color: var(--linea2); }
+.tema {
+  font: 400 13px/1 "Plex Mono", ui-monospace, monospace; color: var(--dim); background: none;
+  border: 1px solid var(--linea2); padding: 6px 9px; border-radius: 6px; cursor: pointer;
+}
+.tema:hover, .idiomas button:hover { color: var(--texto); }
+/* El boton nombra el modo al que lleva */
+:root[data-theme="light"] .a-claro, :root:not([data-theme="light"]) .a-oscuro { display: none; }
+
+h1 { font-weight: 500; font-size: 30px; line-height: 1.2; margin: 0 0 14px; letter-spacing: -.01em; }
+.intro { color: var(--texto2); margin: 0 0 40px; }
+
+section { margin-bottom: 36px; }
+h2 {
+  font: 400 12px/1 "Plex Mono", ui-monospace, monospace; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted); margin: 0 0 6px;
+}
+.nota { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+
+.montos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+@media (max-width: 480px) { .montos { grid-template-columns: repeat(2, 1fr); } }
+
+.boton, .fila {
+  display: flex; align-items: center; text-decoration: none; color: var(--texto);
+  background: var(--superficie); border: 1px solid var(--linea2); border-radius: 10px;
+  transition: border-color .15s, background .15s;
+}
+.boton { justify-content: center; min-height: 56px; padding: 10px 8px; font-weight: 500; font-size: 17px; text-align: center; }
+.boton small { display: block; font-weight: 400; font-size: 13px; color: var(--muted); }
+.fila { justify-content: space-between; gap: 16px; padding: 16px 18px; margin-bottom: 8px; }
+.fila .nombre { font-weight: 500; }
+.fila .desc { display: block; color: var(--muted); font-size: 14px; }
+.fila .flecha { color: var(--acento); font-family: "Plex Mono", ui-monospace, monospace; }
+a.boton:hover, a.fila:hover, a.boton:focus-visible, a.fila:focus-visible {
+  border-color: var(--acento); background: var(--foco); outline: none;
+}
+.pronto { opacity: .55; cursor: default; }
+.redes { display: flex; gap: 22px; padding-top: 6px; }
+.red { display: inline-flex; color: var(--muted); transition: color .15s; }
+.red svg { width: 26px; height: 26px; }
+a.red:hover, a.red:focus-visible { color: var(--acento); outline: none; }
+.red.pronto { opacity: .4; }
+.pronto .flecha { color: var(--dim); }
+
+</style>
+</head>
+<body>
+<main>
+  <div class="cabeza">
+    <span class="marca"><b>STV</b> · TrimUI Smart Pro S</span>
+    <div class="controles">
+      <button type="button" class="tema" id="tema">
+        <span class="a-claro"><span lang="es">Claro</span><span lang="en">Light</span></span>
+        <span class="a-oscuro"><span lang="es">Oscuro</span><span lang="en">Dark</span></span>
+      </button>
+      <div class="idiomas" role="group" aria-label="Idioma / Language">
+        <button type="button" data-idioma="en" aria-pressed="true">EN</button>
+        <button type="button" data-idioma="es" aria-pressed="false">ES</button>
+      </div>
+    </div>
+  </div>
+
+  <h1><span lang="es">Apoyar el proyecto</span><span lang="en">Support the project</span></h1>
+  <p class="intro">
+    <span lang="es">STV es un firmware Android para la TrimUI Smart Pro S, desarrollado de forma independiente. Cada aporte permite dedicarle más tiempo: nuevas funciones, mejor rendimiento y correcciones.</span>
+    <span lang="en">STV is a custom Android firmware for the TrimUI Smart Pro S, developed independently. Every contribution makes it possible to devote more time to it: new features, better performance and fixes.</span>
+  </p>
+
+  <section aria-labelledby="t-mp">
+    <h2 id="t-mp"><span lang="es">Desde Argentina · Mercado Pago</span><span lang="en">From Argentina · Mercado Pago</span></h2>
+    <p class="nota">
+      <span lang="es">Con dinero en cuenta, tarjeta de débito o de crédito.</span>
+      <span lang="en">With account balance, debit or credit card.</span>
+    </p>
+    <div class="montos" id="montos"></div>
+  </section>
+
+  <section aria-labelledby="t-int">
+    <h2 id="t-int"><span lang="es">Desde cualquier país</span><span lang="en">From any country</span></h2>
+    <div id="internacional"></div>
+  </section>
+
+  <section aria-labelledby="t-enlaces">
+    <h2 id="t-enlaces"><span lang="es">Enlaces</span><span lang="en">Links</span></h2>
+    <div class="redes" id="enlaces"></div>
+  </section>
+</main>
+
+<script>
+// ===== ENLACES: lo unico que se edita para cambiar un link o un monto =====
+// url null = el boton sale como "Proximamente / Coming soon".
+const ENLACES = {
+  mercadoPago: [
+    { monto: "$ 1.550",  url: "https://mpago.la/1cii8EJ" },
+    { monto: "$ 4.650",  url: "https://mpago.la/1uHcK7u" },
+    { monto: "$ 10.850", url: "https://mpago.la/1Bmm433" },
+    { libre: true,       url: "https://link.mercadopago.com.ar/littlewild" }
+  ],
+  internacional: [
+    { nombre: "GitHub Sponsors", url: null,
+      es: "Aporte mensual o único, sin comisión. Requiere una cuenta de GitHub.",
+      en: "Monthly or one-time, no fees. Requires a GitHub account." },
+    { nombre: "Ko-fi", url: null,
+      es: "Con tarjeta o PayPal, sin necesidad de crear una cuenta.",
+      en: "With a card or PayPal, no account needed." }
+  ],
+  // El repo publico del proyecto todavia no existe (arco subida-github).
+  // Solo iconos; sin URL el icono sale apagado y sin enlace.
+  enlaces: [
+    { nombre: "GitHub",    icono: "github",    url: null },
+    { nombre: "Instagram", icono: "instagram", url: null }
+  ]
+};
+
+const PRONTO = { es: "Próximamente", en: "Coming soon" };
+
+function texto(es, en) {
+  const f = document.createDocumentFragment();
+  for (const [l, t] of [["es", es], ["en", en]]) {
+    const s = document.createElement("span"); s.lang = l; s.textContent = t; f.appendChild(s);
+  }
+  return f;
+}
+
+function enlace(clase, url) {
+  const el = document.createElement(url ? "a" : "div");
+  el.className = clase + (url ? "" : " pronto");
+  if (url) { el.href = url; el.rel = "noopener noreferrer"; }
+  else el.setAttribute("aria-disabled", "true");
+  return el;
+}
+
+const montos = document.getElementById("montos");
+for (const m of ENLACES.mercadoPago) {
+  const b = enlace("boton", m.url);
+  const linea = document.createElement("span");
+  if (m.libre) linea.appendChild(texto("Otro monto", "Other amount"));
+  else linea.textContent = m.monto;
+  b.appendChild(linea);
+  if (!m.url) {
+    const s = document.createElement("small"); s.appendChild(texto(PRONTO.es, PRONTO.en));
+    linea.appendChild(s);
+  }
+  montos.appendChild(b);
+}
+
+function filas(destino, lista) {
+  for (const p of lista) {
+    const f = enlace("fila", p.url);
+    const izq = document.createElement("span");
+    const n = document.createElement("span"); n.className = "nombre"; n.textContent = p.nombre;
+    const d = document.createElement("span"); d.className = "desc";
+    d.appendChild(p.url ? texto(p.es, p.en) : texto(PRONTO.es, PRONTO.en));
+    izq.append(n, d);
+    const fl = document.createElement("span"); fl.className = "flecha"; fl.textContent = "→";
+    f.append(izq, fl);
+    destino.appendChild(f);
+  }
+}
+filas(document.getElementById("internacional"), ENLACES.internacional);
+
+// Iconos de "Enlaces": trazos simples en currentColor (GitHub = octicon mark-github, MIT).
+const ICONOS = {
+  github: '<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>',
+  instagram: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>'
+};
+const redes = document.getElementById("enlaces");
+for (const r of ENLACES.enlaces) {
+  const el = document.createElement(r.url ? "a" : "span");
+  el.className = "red" + (r.url ? "" : " pronto");
+  el.innerHTML = ICONOS[r.icono];
+  el.setAttribute("aria-label", r.nombre);
+  el.title = r.url ? r.nombre : r.nombre + " · " + PRONTO.en + " / " + PRONTO.es;
+  if (r.url) { el.href = r.url; el.rel = "noopener noreferrer"; }
+  redes.appendChild(el);
+}
+
+// ===== idioma: ingles por defecto (pedido del usuario 2026-10-01); el elegido a mano se recuerda =====
+const TITULOS = { es: "Apoyar el proyecto · STV", en: "Support the project · STV" };
+function poner(l) {
+  document.documentElement.lang = l;
+  document.title = TITULOS[l];
+  for (const b of document.querySelectorAll("[data-idioma]"))
+    b.setAttribute("aria-pressed", String(b.dataset.idioma === l));
+}
+let elegido = null;
+try { elegido = localStorage.getItem("stv-idioma"); } catch (e) {}
+poner(elegido === "es" ? "es" : "en");
+for (const b of document.querySelectorAll("[data-idioma]")) {
+  b.addEventListener("click", () => {
+    poner(b.dataset.idioma);
+    try { localStorage.setItem("stv-idioma", b.dataset.idioma); } catch (e) {}
+  });
+}
+
+// ===== tema: oscuro por defecto; claro a eleccion, recordado =====
+function tema(t) {
+  if (t === "light") document.documentElement.dataset.theme = "light";
+  else delete document.documentElement.dataset.theme;
+}
+try { tema(localStorage.getItem("stv-tema")); } catch (e) {}
+document.getElementById("tema").addEventListener("click", () => {
+  const t = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+  tema(t);
+  try { localStorage.setItem("stv-tema", t); } catch (e) {}
+});
+</script>
+</body>
+</html>
